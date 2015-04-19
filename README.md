@@ -11,7 +11,7 @@ A brief description of each of these files follows.
 ## Code Book
 The file `codebook.md` documents the data used in processing, transformations on these data, variables created and outputs generated.
 
-# Run analysis script
+## Run analysis script
 Run analysis is an R script stored as `run_analysis.R`. The script performs data processing and output creation. It assumes that:
 - the input data have been downloaded, uncompressed and saved on the local filesystem;
 - the current working directory of R sessions is the input data root directory (UCI HAR Dataset), so that for example `activity_labels.txt` refers to activity labels table, and `test/y_test.txt` refers to test subjects ids performing activities;
