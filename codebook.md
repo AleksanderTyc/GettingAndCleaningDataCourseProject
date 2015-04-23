@@ -51,6 +51,10 @@ Summaries of *measures of interest* are calculated separately for each group (ac
 
 ## Variables created
 
-Output
+#### activity_id
 
+
+## Output
+The code creates a single output file `measurement_means.txt` stored in the parent directory. The file is a blank-separated text file and it contains 68 columns. The first two are `activity_label` and `subject` and the following 66 are means of *measures of interest*. Their names are derived from `features.txt` file.
+As there are 30 test subjects, each peforming 6 activities, the file has 180 rows of data, hence 181 rows in total, including header.
 
