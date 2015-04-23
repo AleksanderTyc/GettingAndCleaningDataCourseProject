@@ -1,6 +1,6 @@
 This file is part of solution to Coursera Getting and Cleaning Data Course Project. It is a code book, which documents the data used in processing, transformations on these data, variables created and outputs generated.
 
-# Input data
+## Input data
 
 Data stored in the following files are used as input in the processing:
 - test/X_test.txt
@@ -16,28 +16,40 @@ Data stored in the following files are used as input in the processing:
 
 `activity_labels.txt` contains two columns: activity id and activity label. It is used in processing to translate activity id's into meaningful labels to describe activities.
 
-`features.txt` contains names of measures stored in `X_` files. It is used in processing to determine which columns contain *measures of interest*, i.e. mean or standard deviation. It is also used to provide names of these columns in the output file. As these columns do not adhere to column naming conventions in R, they must be transformed first.
+`features.txt` contains two columns: measure number and measure name of measures stored in `X_` files. It is used in processing to determine which columns contain *measures of interest*, i.e. mean or standard deviation. It is also used to provide names of these columns in the output file. As these names do not conform to column naming conventions in R, they must be transformed first.
 
 
-# Transformations
-features is read as csv with column names `feature_no` and `feature_name`.
-New column `interest` is built: Logical, TRUE if `feature_name` contains any of words "mean" or "std", where words are substrings separated by "-" or "(".
-New dataframe is then created with filtered rows: row is saved only if `interest` is TRUE.
-New column `corr.name` is built: Character, contains `feature_name` with characters "-", "(", ")" and "," replaced with "_". This results in a name which is an R-acceptable column name.
+## Transformations
 
-X_ are appended
-y_ are appended
-subject_ are appended
+### Step 1.
+`activity_labels.txt` is read and keyed by activity id. This allows easy join by activity id in the future. Resulting data table `dt.labels` contains both columns and all input rows.
 
-X, y and subject are merged together. They are processed as columns of the same dataset - no join key necessary, order of rows decides. Saved as a data table `dt.data`.
-`dt.data` is sorted by `activity` and `subject`.
-`dt.data` is joined to activity labels by `activity`. Activity identifier is dropped as unnecessary.
-Aggregations are calculated on every measure column.
-Output dataset containing 68 columns (2 keys - `activity` and `subject`; 66 measure columns) is saved as blank-separated text file `measurement_means.txt`.
+### Step 2.
+`features.txt` is read into a data frame `df.feat`.
+A logical column `interest` is built and added to `df.feat`: TRUE if feature name contains any of words "mean" or "std", where words are substrings separated by "-" or "(".
+New data frame `df.feat.sel` is then created with rows filtered from `df.feat`: row is saved only if `interest` is TRUE.
+New column `corr.name` is built and added to `df.feat.sel`: Character, contains feature name with characters "-", "(", ")" and "," replaced with "_". This results in a name which is an R-acceptable column name.
+
+### Step 3.
+`X_test.txt` and `X_train.txt` are read and appended into a data frame `df.X`. The processing takes advantage of `LaF` package functionality to select columns of interest, whose indices were determined in step 2.
+
+### Step 4.
+`y_test.txt` and `y_train.txt`  are read and appended into a data frame `df.y`.
+
+### Step 5.
+`subject_test.txt` and `subject_train.txt`  are read and appended into a data frame `df.subj`.
+
+### Step 6.
+Data frames `df.X`, `df.y` and `df.subj` are merged side-by-side into a single dataset and stored as data table `dt.data`. `dt.data` is sorted by activity id and test subject id.
+
+### Step 7.
+`dt.data` is joined by activity id to `dt.labels`. Resulting data table is stored as `dt.labelled`.
+
+### Step 8.
+Summaries of *measures of interest* are calculated separately for each group (activity label, test subject id). Output is saved to `measurement_means.txt` file in the parent directory.
 
 
-
-Variables created
+## Variables created
 
 Output
 

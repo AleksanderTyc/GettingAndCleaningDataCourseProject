@@ -3,6 +3,7 @@ library( data.table )
 
 # #############################################################################
 #
+#     Step 1.
 #     Read activities lables list
 #
 #  Convert it into data.table. Sort by activity number.
@@ -16,6 +17,7 @@ setkey( dt.labels, y )
 
 # #############################################################################
 #
+#     Step 2.
 #     Read features list
 #
 #  Find measurements of mean or standard deviation.
@@ -43,7 +45,8 @@ df.feat.sel$corr.name <- unlist( lapply( df.feat.sel$feature_name, f2 ) )
 
 # #############################################################################
 #
-#    Read measurement inputs datasets
+#     Step 3.
+#     Read measurement inputs datasets
 #
 #  Read main input datasets using LaF library, large fwf files.
 #  Append train and test datasets.
@@ -93,18 +96,20 @@ f.append <- function( source ) {
     
 # #############################################################################
 #
-#    Read measures datasets
+#     Step 4.
+#     Read test activities id values
 #
-#  Build dataframe df.X containing measures from both inputs.
+#  Build dataframe df.y containing activities id values.
 #
 # #############################################################################
 df.y <- f.append( "y" )
 
 # #############################################################################
 #
-#    Read measures datasets
+#     Step 5.
+#     Read test subjects id values
 #
-#  Build dataframe df.X containing measures from both inputs.
+#  Build dataframe df.subj containing test subjects id values.
 #
 # #############################################################################
 df.subj <- f.append( "subject" )
@@ -112,7 +117,8 @@ df.subj <- f.append( "subject" )
 
 # #############################################################################
 #
-#    Perform keyless join of input datasets.
+#     Step 6.
+#     Perform keyless join of input datasets.
 #
 #  Input datasets contain records in the right order.
 #  They are simply combined in one dataset.
@@ -126,7 +132,8 @@ setkey(dt.data, y, subject )
 
 # #############################################################################
 #
-#    Label the data.
+#     Step 7.
+#     Label the data.
 #
 #  Join activity labels to input data.
 #  Drop activity id column as no longer necessary.
@@ -137,7 +144,8 @@ dt.labelled <- subset( dt.data[dt.labels], select = -y )
 
 # #############################################################################
 #
-#    Generate result.
+#     Step 8.
+#     Generate result.
 #
 #  Calculate means of measurement columns.
 #  Save result as a text file.
