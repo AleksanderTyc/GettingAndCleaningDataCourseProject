@@ -30,6 +30,8 @@ A logical column `interest` is built and added to `df.feat`: TRUE if feature nam
 New data frame `df.feat.sel` is then created with rows filtered from `df.feat`: row is saved only if `interest` is TRUE.
 New column `corr.name` is built and added to `df.feat.sel`: Character, contains feature name with characters "-", "(", ")" and "," replaced with "_". This results in a name which is an R-acceptable column name.
 
+In result `df.feat.sel` contains indices of columns of interest (used in step 3 to subset input data and select relevant columns only) and names of columns of interest corrected to follow R naming convention.
+
 ### Step 3.
 `X_test.txt` and `X_train.txt` are read and appended into a data frame `df.X`. The processing takes advantage of `LaF` package functionality to select columns of interest, whose indices were determined in step 2.
 
@@ -46,12 +48,22 @@ Data frames `df.X`, `df.y` and `df.subj` are merged side-by-side into a single d
 `dt.data` is joined by activity id to `dt.labels`. Resulting data table is stored as `dt.labelled`.
 
 ### Step 8.
-Summaries of *measures of interest* are calculated separately for each group (activity label, test subject id). Output is saved to `measurement_means.txt` file in the parent directory.
+Summaries of *measures of interest* are calculated separately for each group by (activity label, test subject id). Output is saved to `measurement_means.txt` file in the parent directory.
 
 
 ## Variables created
 
-#### activity_id
+#### interest
+
+#### corr.name
+
+#### subject
+This variable is saved on output file.
+
+#### activity_label
+This variable is saved on output file.
+
+#### activity_id (wymaga poprawy kodu i testu!)
 
 
 ## Output
