@@ -5,10 +5,10 @@ This file is part of solution to Coursera Getting and Cleaning Data Course Proje
 Data stored in the following files are used as input in the processing:
 - test/X_test.txt
 - train/X_train.txt
-- y_test.txt
-- y_train.txt
-- subject_test.txt
-- subject_train.txt
+- test/y_test.txt
+- train/y_train.txt
+- test/subject_test.txt
+- train/subject_train.txt
 - activity_labels.txt
 - features.txt
 
@@ -16,7 +16,7 @@ Data stored in the following files are used as input in the processing:
 
 `activity_labels.txt` contains two columns: activity id and activity label. It is used in processing to translate activity id's into meaningful labels to describe activities.
 
-`features.txt` contains two columns: measure number and measure name of measures stored in `X_` files. It is used in processing to determine which columns contain *measures of interest*, i.e. mean or standard deviation. It is also used to provide names of these columns in the output file. As these names do not conform to column naming conventions in R, they must be transformed first.
+`features.txt` contains two columns: measure number and measure name describing measures stored in `X_` files. It is used in processing to determine which columns contain *measures of interest*, i.e. mean or standard deviation. It is also used to provide names of these columns in the output file. As these names do not conform to column naming conventions in R, they must be transformed first.
 
 
 ## Transformations
@@ -28,24 +28,24 @@ Data stored in the following files are used as input in the processing:
 `features.txt` is read into a data frame `df.feat`.
 A logical column `interest` is built and added to `df.feat`: TRUE if feature name contains any of words "mean" or "std", where words are substrings separated by "-" or "(".
 New data frame `df.feat.sel` is then created with rows filtered from `df.feat`: row is saved only if `interest` is TRUE.
-New column `corr.name` is built and added to `df.feat.sel`: Character, contains feature name with characters "-", "(", ")" and "," replaced with "_". This results in a name which is an R-acceptable column name.
+New column `corr.name` is built and added to `df.feat.sel`: character, contains feature name with characters "-", "(", ")" and "," replaced with "_". This results in a name which is an R-acceptable column name.
 
-In result `df.feat.sel` contains indices of columns of interest (used in step 3 to subset input data and select relevant columns only) and names of columns of interest corrected to follow R naming convention.
+Therefore `df.feat.sel` contains indices of columns of interest (used in step 3 to subset input data and select relevant columns only) and names of columns of interest corrected to follow R naming convention.
 
 ### Step 3.
-`X_test.txt` and `X_train.txt` are read and appended into a data frame `df.X`. The processing takes advantage of `LaF` package functionality to select columns of interest, whose indices were determined in step 2.
+`X_test.txt` and `X_train.txt` are read and appended into a single data frame `df.X`. The processing takes advantage of `LaF` package functionality to select columns of interest, whose indices were determined in step 2. All input rows are kept.
 
 ### Step 4.
-`y_test.txt` and `y_train.txt`  are read and appended into a data frame `df.y`.
+`y_test.txt` and `y_train.txt`  are read and appended into a single data frame `df.y`. All input rows are kept.
 
 ### Step 5.
-`subject_test.txt` and `subject_train.txt`  are read and appended into a data frame `df.subj`.
+`subject_test.txt` and `subject_train.txt`  are read and appended into a single data frame `df.subj`. All input rows are kept.
 
 ### Step 6.
-Data frames `df.X`, `df.y` and `df.subj` are merged side-by-side into a single dataset and stored as data table `dt.data`. `dt.data` is sorted by activity id and test subject id.
+Data frames `df.X`, `df.y` and `df.subj` are merged side-by-side into a single dataset and stored as data table `dt.data`. As there is no key in this merge, the order of records decides. `dt.data` is sorted by activity id and test subject id. All input rows are kept.
 
 ### Step 7.
-`dt.data` is joined by activity id to `dt.labels`. Resulting data table is stored as `dt.labelled`.
+`dt.data` is joined (outer join) by activity id to `dt.labels`. Resulting data table is stored as `dt.labelled`.
 
 ### Step 8.
 Summaries of *measures of interest* are calculated separately for each group by (activity label, test subject id). Output is saved to `measurement_means.txt` file in the parent directory.
@@ -58,7 +58,8 @@ It is required that only mean and standard deviation measures are processed and 
 The variable is `TRUE` if and only if the corresponding measure is one of the *measures of interest*.
 
 #### corr.name
-It is required that the measures on the output file are provided with meaningful names. Their names are obtained from `features.txt` file and stored as `feature_name` variable. Since feature name may contain *forbidden* characters, these are be translated into "_". The result is stored as `corr.name`.
+It is required that the measures on the output file are provided with meaningful names. Their names are obtained from `features.txt` file and stored as `feature_name` variable.
+A feature name may contain characters, which make it R-noncompliant. These characters are translated into "_". The result is stored as `corr.name`.
 
 #### subject
 Provides id of the subject performing the test. Read from `subject_` datasets and merged to `dt.data` data table.
@@ -66,10 +67,10 @@ This variable is saved on output file.
 
 #### activity_label
 Read as the second column from `activity_labels.txt`. Describes activity in human-readable form. There is no modification performed on the source value.
-This variable is saved on output file.
+This variable is merged to `dt.data` data table by activity id and saved on output file.
 
 #### activity_id
-Primary key on `activity_labels.txt`. Foreign key on `y_` datasets. Then merged to `dt.data` data table. Used to obtain human-readable activity labels. There is no modification performed on the source value. 
+Primary key on `activity_labels.txt`. Foreign key on `y_` datasets. Used to merge activity labels to measures data to obtain human-readable activity descriptions. There is no modification performed on the source value. 
 All input records are included when labels are joined to `dt.data` on `activity_id` (outer join).
 
 ## Output
