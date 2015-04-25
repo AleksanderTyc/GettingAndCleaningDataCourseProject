@@ -10,9 +10,9 @@ library( data.table )
 #  Name activity number as "y" as this is consistent with further processing.
 #
 # #############################################################################
-df.labels <- read.csv( "activity_labels.txt", header = F, sep = " ", stringsAsFactors = F, col.names = c("y", "activity_label") )
+df.labels <- read.csv( "activity_labels.txt", header = F, sep = " ", stringsAsFactors = F, col.names = c("activity_id", "activity_label") )
 dt.labels <- data.table( df.labels )
-setkey( dt.labels, y )
+setkey( dt.labels, activity_id )
 
 
 # #############################################################################
@@ -87,10 +87,11 @@ names( df.X ) <- df.feat.sel$corr.name
 #  Input files are read as csv, as subject row length varies.
 #
 # #############################################################################
-f.append <- function( source ) {
+f.append <- function( source, target = NULL ) {
 
-    df.train <- read.csv( file.path( "train", paste( source, "_train.txt", sep = "" ) ), header = F, sep = " ", stringsAsFactors = F, col.names = source )
-    df.test <- read.csv( file.path( "test", paste( source, "_test.txt", sep = "" ) ), header = F, sep = " ", stringsAsFactors = F, col.names = source )
+    if( is.null( target ) ) { target <- source }
+    df.train <- read.csv( file.path( "train", paste( source, "_train.txt", sep = "" ) ), header = F, sep = " ", stringsAsFactors = F, col.names = target )
+    df.test <- read.csv( file.path( "test", paste( source, "_test.txt", sep = "" ) ), header = F, sep = " ", stringsAsFactors = F, col.names = target )
     return( rbind( df.train, df.test ) )
     }
     
@@ -102,7 +103,7 @@ f.append <- function( source ) {
 #  Build dataframe df.y containing activities id values.
 #
 # #############################################################################
-df.y <- f.append( "y" )
+df.y <- f.append( "y", "activity_id" )
 
 # #############################################################################
 #
@@ -127,7 +128,7 @@ df.subj <- f.append( "subject" )
 # #############################################################################
 df.data <- cbind( df.y, df.subj, df.X )
 dt.data <- data.table( df.data )
-setkey(dt.data, y, subject )
+setkey(dt.data, activity_id, subject )
 
 
 # #############################################################################
@@ -139,7 +140,7 @@ setkey(dt.data, y, subject )
 #  Drop activity id column as no longer necessary.
 #
 # #############################################################################
-dt.labelled <- subset( dt.data[dt.labels], select = -y )
+dt.labelled <- subset( dt.data[dt.labels], select = -activity_id )
 
 
 # #############################################################################

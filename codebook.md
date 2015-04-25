@@ -54,17 +54,23 @@ Summaries of *measures of interest* are calculated separately for each group by 
 ## Variables created
 
 #### interest
+It is required that only mean and standard deviation measures are processed and saved to the output file. `interest` is a logical variable created along features list to indicate if a given feature is a *measure of interest* i.e. whether it stores mean or standard deviation or some other type of statistics.
+The variable is `TRUE` if and only if the corresponding measure is one of the *measures of interest*.
 
 #### corr.name
+It is required that the measures on the output file are provided with meaningful names. Their names are obtained from `features.txt` file and stored as `feature_name` variable. Since feature name may contain *forbidden* characters, these are be translated into "_". The result is stored as `corr.name`.
 
 #### subject
+Provides id of the subject performing the test. Read from `subject_` datasets and merged to `dt.data` data table.
 This variable is saved on output file.
 
 #### activity_label
+Read as the second column from `activity_labels.txt`. Describes activity in human-readable form. There is no modification performed on the source value.
 This variable is saved on output file.
 
-#### activity_id (wymaga poprawy kodu i testu!)
-
+#### activity_id
+Primary key on `activity_labels.txt`. Foreign key on `y_` datasets. Then merged to `dt.data` data table. Used to obtain human-readable activity labels. There is no modification performed on the source value. 
+All input records are included when labels are joined to `dt.data` on `activity_id` (outer join).
 
 ## Output
 The code creates a single output file `measurement_means.txt` stored in the parent directory. The file is a blank-separated text file and it contains 68 columns. The first two are `activity_label` and `subject` and the following 66 are means of *measures of interest*. Their names are derived from `features.txt` file.
